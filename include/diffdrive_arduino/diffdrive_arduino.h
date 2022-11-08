@@ -48,6 +48,8 @@ private:
 
   Wheel l_wheel_;
   Wheel r_wheel_;
+  Wheel rl_wheel_; //adding rear wheel left
+  Wheel rr_wheel_;
 
   rclcpp::Logger logger_;
 

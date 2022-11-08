@@ -24,8 +24,15 @@ return_type DiffDriveArduino::configure(const hardware_interface::HardwareInfo &
 
   time_ = std::chrono::system_clock::now();
 
+  //Front wheels
   cfg_.left_wheel_name = info_.hardware_parameters["left_wheel_name"];
   cfg_.right_wheel_name = info_.hardware_parameters["right_wheel_name"];
+  //rear wheels
+  cfg_.rear_left_wheel_name = info_.hardware_parameters["rear_left_name"]; //Adding another wheel test
+  cfg_.rear_right_wheel_name = info_.hardware_parameters["rear_right_name"];
+  //turning joints
+  //TODO
+  //arduino params
   cfg_.loop_rate = std::stof(info_.hardware_parameters["loop_rate"]);
   cfg_.device = info_.hardware_parameters["device"];
   cfg_.baud_rate = std::stoi(info_.hardware_parameters["baud_rate"]);
@@ -35,6 +42,8 @@ return_type DiffDriveArduino::configure(const hardware_interface::HardwareInfo &
   // Set up the wheels
   l_wheel_.setup(cfg_.left_wheel_name, cfg_.enc_counts_per_rev);
   r_wheel_.setup(cfg_.right_wheel_name, cfg_.enc_counts_per_rev);
+  rl_wheel_.setup(cfg_.rear_left_wheel_name, cfg_.enc_counts_per_rev);
+  rr_wheel_.setup(cfg_.rear_right_wheel_name, cfg_.enc_counts_per_rev);
 
   // Set up the Arduino
   arduino_.setup(cfg_.device, cfg_.baud_rate, cfg_.timeout);  
@@ -56,6 +65,11 @@ std::vector<hardware_interface::StateInterface> DiffDriveArduino::export_state_i
   state_interfaces.emplace_back(hardware_interface::StateInterface(r_wheel_.name, hardware_interface::HW_IF_VELOCITY, &r_wheel_.vel));
   state_interfaces.emplace_back(hardware_interface::StateInterface(r_wheel_.name, hardware_interface::HW_IF_POSITION, &r_wheel_.pos));
 
+  state_interfaces.emplace_back(hardware_interface::StateInterface(rl_wheel_.name, hardware_interface::HW_IF_VELOCITY, &rl_wheel_.vel));
+  state_interfaces.emplace_back(hardware_interface::StateInterface(rl_wheel_.name, hardware_interface::HW_IF_POSITION, &rl_wheel_.pos));
+  state_interfaces.emplace_back(hardware_interface::StateInterface(rr_wheel_.name, hardware_interface::HW_IF_VELOCITY, &rl_wheel_.vel));
+  state_interfaces.emplace_back(hardware_interface::StateInterface(rr_wheel_.name, hardware_interface::HW_IF_POSITION, &rl_wheel_.pos));
+
   return state_interfaces;
 }
 
@@ -67,6 +81,9 @@ std::vector<hardware_interface::CommandInterface> DiffDriveArduino::export_comma
 
   command_interfaces.emplace_back(hardware_interface::CommandInterface(l_wheel_.name, hardware_interface::HW_IF_VELOCITY, &l_wheel_.cmd));
   command_interfaces.emplace_back(hardware_interface::CommandInterface(r_wheel_.name, hardware_interface::HW_IF_VELOCITY, &r_wheel_.cmd));
+
+  command_interfaces.emplace_back(hardware_interface::CommandInterface(rl_wheel_.name, hardware_interface::HW_IF_VELOCITY, &rl_wheel_.cmd));
+  command_interfaces.emplace_back(hardware_interface::CommandInterface(rr_wheel_.name, hardware_interface::HW_IF_VELOCITY, &rr_wheel_.cmd));
 
   return command_interfaces;
 }
@@ -111,7 +128,7 @@ hardware_interface::return_type DiffDriveArduino::read()
     return return_type::ERROR;
   }
 
-  arduino_.readEncoderValues(l_wheel_.enc, r_wheel_.enc);
+  arduino_.readEncoderValues(l_wheel_.enc, r_wheel_.enc); //, rl_wheel_.enc
 
   double pos_prev = l_wheel_.pos;
   l_wheel_.pos = l_wheel_.calcEncAngle();
@@ -120,7 +137,11 @@ hardware_interface::return_type DiffDriveArduino::read()
   pos_prev = r_wheel_.pos;
   r_wheel_.pos = r_wheel_.calcEncAngle();
   r_wheel_.vel = (r_wheel_.pos - pos_prev) / deltaSeconds;
-
+/*
+  pos_prev = rl_wheel_.pos;
+  rl_wheel_.pos = rl_wheel_.calcEncAngle();
+  rl_wheel_.vel = (rl_wheel_.pos - pos_prev) / deltaSeconds;
+*/
 
 
   return return_type::OK;
