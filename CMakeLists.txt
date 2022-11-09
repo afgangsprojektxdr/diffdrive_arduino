@@ -11,8 +11,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra)
 endif()
 
+
 find_package(ament_cmake REQUIRED)
 find_package(serial REQUIRED)
+find_package(PahoMqttCpp REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(controller_manager REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -23,7 +25,7 @@ find_package(pluginlib REQUIRED)
 
 
 
-add_library(diffdrive_arduino SHARED src/diffdrive_arduino.cpp src/wheel.cpp src/arduino_comms.cpp)
+add_library(diffdrive_arduino SHARED src/diffdrive_arduino.cpp src/wheel.cpp src/arduino_comms2.cpp)
 
 target_include_directories(
   diffdrive_arduino
@@ -35,6 +37,7 @@ ament_target_dependencies(
   hardware_interface
   controller_manager
   serial
+  PahoMqttCpp
   rclcpp
   pluginlib
 )
@@ -86,6 +89,7 @@ ament_export_dependencies(
   hardware_interface
   controller_manager
   serial
+  PahoMqttCpp
   rclcpp
   pluginlib
 )

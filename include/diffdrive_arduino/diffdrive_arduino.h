@@ -13,7 +13,8 @@
 
 #include "config.h"
 #include "wheel.h"
-#include "arduino_comms.h"
+//#include "arduino_comms.h"
+#include "arduino_comms2.h"
 
 
 using hardware_interface::return_type;
