@@ -12,16 +12,17 @@ class ArduinoComms
 public:
 
   ArduinoComms()
-  {  setup();}
+  {  }
 
   ArduinoComms(const std::string &serial_device, int32_t baud_rate, int32_t timeout_ms)
   {  
     std::string test = serial_device;
     int test2 = baud_rate;
     int test3 = timeout_ms;
-    setup();}
+    std::cout<< test << test2 <<test3<<std::endl;
+    setup(serial_device, baud_rate, timeout_ms);}
 
-  void setup();
+  void setup(const std::string &serial_device, int32_t baud_rate, int32_t timeout_ms);
   void sendEmptyMsg();
   void readEncoderValues(int &val_1, int &val_2);
   void setMotorValues(int val_1, int val_2);

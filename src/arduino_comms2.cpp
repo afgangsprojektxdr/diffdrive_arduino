@@ -13,69 +13,71 @@
 #include <cstring>
 #include "mqtt/async_client.h"
 
-namespace std
 
-void ArduinoComms::setup()
+void ArduinoComms::setup(const std::string &serial_device, int32_t baud_rate, int32_t timeout_ms)
 {  
-    sendMsg("hello",0);
+    std::cout << baud_rate<<timeout_ms<< std::endl;
+	sendMsg(serial_device,40);
 }
 
 
 void ArduinoComms::sendEmptyMsg()
 {
-    std::string response = sendMsg("\r");
+    std::string response = sendMsg("nt");
 }
 
 void ArduinoComms::readEncoderValues(int &val_1, int &val_2)
-{
-    
+{	
+	val_1 = 2;
+	val_2 = 3;
+    std::cout <<val_1<<val_2<<std::endl;
 }
 
 void ArduinoComms::setMotorValues(int val_1, int val_2)
 {
-    
+    std::cout <<val_1<<val_2<<std::endl;
 }
 
 void ArduinoComms::setPidValues(float k_p, float k_d, float k_i, float k_o)
 {
-
+std::cout <<k_p<<k_d<<k_i<<k_o<<std::endl;
 }
 
 std::string ArduinoComms::sendMsg(const std::string &msg_to_send, bool print_output)
 {
 
+	std::cout <<msg_to_send<< print_output << std::endl;
+	std::string address = DFLT_SERVER_ADDRESS;
 
-	string address = (argc > 1) ? string(argv[1]) : DFLT_SERVER_ADDRESS;
-
-	cout << "Initializing for server '" << address << "'..." << endl;
+	std::cout << "Initializing for server '" << address << "'..." << std::endl;
 	mqtt::async_client cli(address, "");
 
-	cout << "  ...OK" << endl;
+	std::cout << "  ...OK" << std::endl;
 
 	try {
-		cout << "\nConnecting..." << endl;
+		std::cout << "\nConnecting..." << std::endl;
 		cli.connect()->wait();
-		cout << "  ...OK" << endl;
+		std::cout << "  ...OK" << std::endl;
 
-		cout << "\nPublishing messages..." << endl;
+		std::cout << "\nPublishing messages..." << std::endl;
 
 		mqtt::topic top(cli, TOPIC, QOS);
 		mqtt::token_ptr tok;
 
-		size_t i = 0;
+		//size_t i = 0;
 		
 		tok = top.publish(PAYLOAD1);
 		
 		tok->wait();	// Just wait for the last one to complete.
-		cout << "OK" << endl;
+		std::cout << "OK" << std::endl;
 
 		// Disconnect
-		cout << "\nDisconnecting..." << endl;
+		std::cout << "\nDisconnecting..." << std::endl;
 		cli.disconnect()->wait();
-		cout << "  ...OK" << endl;
+		std::cout << "  ...OK" << std::endl;
 	}
 	catch (const mqtt::exception& exc) {
-		cerr << exc << endl;
+		std::cerr << exc << std::endl;
 		return "nope";
 	}
 
